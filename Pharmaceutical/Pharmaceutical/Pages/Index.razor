@@ -1,0 +1,132 @@
+﻿@page "/"
+@inject IJSRuntime JSRuntime
+<h3><b>Welcome to Medicine Information</b></h3>
+<!-- NOTE: the data-bs- attributes added as per the Bootstrap v5.1 instructions -->
+<div class="container align-content-center  w-75">
+	<div id="@carouselName" class="carousel slide" data-bs-ride="carousel" data-bs-wrap="true" data-bs-interval="5000" data-bs-pause="false">
+		<div class="carousel-indicators">
+			<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+			<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+			<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+			<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+			<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4" aria-label="Slide 5"></button>
+			<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="5" aria-label="Slide 6"></button>
+			<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="6" aria-label="Slide 1"></button>
+		</div>
+
+		<div class="carousel-inner">
+			<div class="carousel-item active">
+				<img src="https://post.healthline.com/wp-content/uploads/2020/08/766x415_How_to_Use_Ear_Drops-1-732x415.jpg" style="width:800px; height:400px;" alt="...">
+			</div>
+			<div class="carousel-item">
+				<img src="https://5.imimg.com/data5/IT/EQ/AN/SELLER-7064863/iron-tablets.jpg" style="width:800px; height:400px;" alt="...">
+			</div>
+			<div class="carousel-item">
+				<img src="https://th.bing.com/th/id/R.e5b86e5e6e4eaa2a037eb63bc1ccdebe?rik=rNWuijzaqQrqQQ&riu=http%3a%2f%2fimages.eyedrops.biz%2fl-m%2feye-drops-best-treatment-cataract-eye-drops-v-3718858892.jpg&ehk=MGzSYjiNXCeEmVlefvuSgXrjaTzEvsuO8xtJhOlYybc%3d&risl=&pid=ImgRaw&r=0" style="width:800px; height:400px;" alt="...">
+			</div>
+			<div class="carousel-item">
+				<img src="https://www.chpa.org/sites/default/files/styles/og_image/public/media/images/2020-10/OTC-medicine-skin.jpg?h=2240b8e9&itok=uOT4M8Pj" style="width:800px; height:400px;" alt="...">
+			</div>
+			<div class="carousel-item">
+				<img src="https://viaglobalhealth.com/wp-content/uploads/2021/05/CDI-Paracetamol-2gen-header-1-scaled-1.jpg" style="width:800px; height:400px;" alt="...">
+			</div>
+			<div class="carousel-item">
+				<img src="https://images.theconversation.com/files/301348/original/file-20191112-178490-y3xwed.jpg?ixlib=rb-1.1.0&rect=0%2C0%2C1000%2C499&q=45&auto=format&w=1356&h=668&fit=crop" style="width:800px; height:400px;" alt="...">
+			</div>
+			<div class="carousel-item">
+				<img src="https://m.media-amazon.com/images/I/71phFxDR6gL._SL1500_.jpg" style="width:800px; height:400px;" alt="...">
+			</div>
+			
+		</div>
+		<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+			<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+			<span class="visually-hidden">Previous</span>
+		</button>
+		<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+			<span class="carousel-control-next-icon" aria-hidden="true"></span>
+			<span class="visually-hidden">Next</span>
+		</button>
+	</div>
+</div>
+@code {
+	const string carouselName = "carouselExampleIndicators"; // NOTE: the ID of the carousel
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		object[] args = { carouselName };
+		await JSRuntime.InvokeVoidAsync("startCarousel", args); // NOTE: call JavaScript function with the ID of the carousel
+	}
+}
+<br />
+<hr />
+<p>
+	<h3><b>Cold</b></h3>
+
+	The common cold, also known as an upper respiratory tract infection, is a viral infection that primarily affects the nose and throat.
+	The symptoms of a common cold are Runny or stuffy nose, Sneezing, Sore throat, Cough, Mild headache, Fatigue or tiredness, Mild body aches, 
+	Mild fever. Some common medicines for relief of cold are Cetirizine, Coldact, Chlorpheniramine, Diphenhydramine.
+	<br />
+	<a href="https://www.medicalnewstoday.com/articles/168266#diagnosis" target="_blank">Know more...</a>
+</p>
+<p>
+
+	<h3><b>Ear Drops</b></h3>
+	Ear drops are medications in liquid form that are specifically designed to be applied directly into the ear canal.
+	Hearing loss, ear fullness, tinnitus (ringing in the ears), earache, pressure.
+	Some common eardrops used for various ear conditions are Antibiotic eardrops, Steroid eardrops, Earwax removal eardrops, Analgesic eardrops,
+	Antifungal eardrops.
+	<br />
+	<a href="https://my.clevelandclinic.org/health/treatments/24654-ear-drops#:~:text=Ear%20drops%20are%20a%20type,Others%20require%20a%20prescription." target="_blank">Know more...</a>
+</p>
+<p>
+	<h3><b>Eye Drops</b></h3>
+	Eye drops are used to treat various eye conditions and symptoms. 
+	Dryness, burning, itching, redness, foreign body sensation, tearing, swollen eyelids, pain, blurred vision.
+	Some common eyedrops are Artificial tears, Antihistamine eye drops, Decongestant eye drops, Antibiotic eye drops, Steroid eye drops.
+	<br />
+	<a href="https://www.webmd.com/drugs/2/drug-20720/eye-drops-regular/detailstarget=" _blank"">Know more...</a>
+</p>
+<p>
+	<h3><b>Fever</b></h3>
+	Fever is a common symptom that indicates the body's immune response to an infection, illness, or inflammation. 
+	It is typically characterized by an elevated body temperature above the normal range of 36-37°C (97-98.6°F). 
+	Symptoms of fever are Increased body temperature, Sweating or chills, Headache, Muscle aches, Fatigue or weakness, 
+	Loss of appetite, Dehydration. Tablets for fever are Paracetamol, Dolo, Aspirin, Ibuprofen.
+	<br />
+	<a href="https://www.medicalnewstoday.com/articles/168266#diagnosis" target="_blank">Know more...</a>
+
+</p>
+<p>
+
+	<h3><b>Headache</b></h3>
+	A headache is a common condition characterized by pain or discomfort in the head or neck region.
+	Some common symptoms of headaches include Pain or aching in the head or neck, pressure or tightness sensation, throbbing or pulsating pain,
+	sensitivity to light or sound, nausea or vomiting, dizziness. Some tablets for headache are Tylenol, Advil, Aleve, Excedrin, Motrin, Bayer, Anacin,
+	Aspirin, Saridon.
+
+	<br />
+	<a href="https://my.clevelandclinic.org/health/diseases/9639-headaches" target="_blank"> Know more...</a>
+</p>
+<p>
+
+	<h3><b>Iron Tablets</b></h3>
+	Iron tablets are used to treat or prevent iron deficiency anaemia, a condition characterized by low levels of iron in the body.
+	The symptoms of iron deficiency anaemia can include Fatigue and weakness, Pale skin, Shortness of breath, Headaches and dizziness, 
+	Cold hands and feet, Brittle nails and hair loss. Tablets used for iron supplementation are Ferrous sulfate, Ferrous gluconate, Ferrous fumarate.
+	<br />
+	<a href="https://www.medicalnewstoday.com/articles/iron-supplements#_noHeaderPrefixedContent" target="_blank">Know more...</a>
+</p>
+<p>
+
+	<h3><b>Skin Medicine</b></h3>
+
+	In general, skin medicines are used to reduce skin diseases or skin problems. The reason of skin problems are Allergies, irritants, genetic makeup, certain diseases, and immune system problems.
+	We can see a tablet which is used for skin problem as example below.
+
+	Perfectil tablet is a dietary supplement containing biotin and micronutrients that has triple action formula for hair, skin and nails. It provides essential nutrients to the hair, nails and skin and makes them healthy and shiny.
+	It possess antioxidant, antiseptic, anti-inflammatory and antibacterial properties. Also, it reduces loss of moisture and keeps skin smooth and fresh.
+
+	Biotin plays a key role in the health of skin, hair and nails. Used in the treatment of premature aging of the skin. Maintains moisture in the skin. Reduces skin damage caused due to sun exposure.
+	<br />
+	<a href="https://www.msdmanuals.com/en-in/home/skin-disorders/treatment-of-skin-disorders/treatment-of-skin-disorders " target="_blank">Know more...</a>
+</p>

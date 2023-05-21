@@ -1,0 +1,134 @@
+﻿@page "/medicine"
+@using Pharmaceutical.Data
+@using Pharmaceutical.Services
+@using System.IO
+@using Microsoft.Azure.CognitiveServices.Vision.ComputerVision
+@using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models
+@using System.Threading.Tasks
+@using System.Threading
+@using System.Linq
+@using Microsoft.CognitiveServices.Speech;
+@using Microsoft.CognitiveServices.Speech.Audio;
+@using Microsoft.CognitiveServices.Speech.Translation;
+@inject IFileUpload fileUpload
+@inject IJSRuntime JS
+@using static Pharmaceutical.Prediction_Model
+
+
+<h3>Medicine Classification Page</h3>
+@if (labelled != null)
+{
+    <h2 class=" col-3 bg-info">@labelled</h2>
+    <hr />
+}
+<div class="row">
+    <div class="col-md-5">
+        <BlazorInputFile.InputFile OnChange="HandleFileSelected"></BlazorInputFile.InputFile>
+            <p></p>
+            <div id="Messagebox" class="col-8 alert-info"></div>
+            <p></p>
+            <div>
+                <img src="@imagename" style="width:300px; height:300px;" />
+            </div>  
+    </div>
+    &nbsp;
+    &nbsp;
+    <div class="col-md-5">
+        <div >
+            <h3> OUPUT RESULT</h3>
+        </div>
+        <hr />
+        <textarea disabled class="form-control" rows="5" cols="5">@sug</textarea>
+        <p></p>
+        <div>
+            <button class="btn btn-primary btn-sm" @onclick="Click_Speak"> Speak</button>
+        </div>
+    </div>   
+</div>
+
+
+@code{
+    
+    public string labelled = "";
+    public string sug= "";
+}
+
+@code {
+    
+    public string imagename = "";
+    IFileListEntry file;
+    public string ResultData { get; set; }
+
+    async Task HandleFileSelected(IFileListEntry[] files)
+    {
+
+        var file = files.FirstOrDefault();
+        if (file != null)
+        {
+            await fileUpload.UploadFile(file);
+            await JS.InvokeVoidAsync("ShowMessageFile", file.Name, file.Size, file.Type);
+            string FilePath = "C:/Users/Madhavi/source/repos/Pharmaceutical/Pharmaceutical/wwwroot/images/" + file.Name;
+            imagename = "images/" + file.Name;
+            string physicalpath = FilePath;
+            var imageBytes = File.ReadAllBytes(physicalpath);
+            var input = new ModelInput();
+            input.ImageSource = imageBytes;
+            ModelOutput result = Predict(input);
+
+            labelled = result.PredictedLabel;
+
+            if (labelled.Trim() == "Cold Medicine")
+            {
+                sug = " cold is a viral infection that primarily affects the nose and throat,Some common medicines for relief of cold are Cetirizine, Coldact, Chlorpheniramine, Diphenhydramine";
+            }
+            else if (labelled == "Ear Drops")
+            {
+                sug = "Ear drops are medications in liquid form that are specifically designed to be applied directly into the ear canal,Some common eardrops used for various ear conditions are Antibiotic eardrops, Steroid eardrops, Earwax removal eardrops";
+            }
+            else if (labelled == "Eye Drops")
+            {
+                sug = "Eye drops are used to treat various eye conditions and symptoms,Some common eyedrops are Artificial tears, Antihistamine eye drops";
+            }
+            else if (labelled == "Iron Medicine")
+            {
+                sug = "Iron tablets are used to treat or prevent iron deficiency anaemia,Tablets used for iron supplementation are Ferrous sulfate, Ferrous gluconate, Ferrous fumarate ";
+            }
+            else if (labelled == "Fever Medicine")
+            {
+                sug = "Fever is a common symptom that indicates the body's immune response to an infection, illness, or inflammation,Tablets for fever are Paracetamol, Dolo, Aspirin, Ibuprofen ";
+            }
+            else if (labelled =="Skin Medicine")
+            {
+                sug = "The reason of skin problems are Allergies, irritants, genetic makeup, certain diseases, and immune system problems,Medicine for skin allergy  are Benadryl,Reactine,Claritine ";
+            }
+            else if (labelled == "Headache Medicine")
+            {
+                sug = "A headache is a common condition characterized by pain or discomfort in the head or neck region,Some tablets for headache are Tylenol, Advil, Aleve, Excedrin, Motrin, Bayer, Anacin ";
+            }
+            else
+            {
+                sug = "please Upload Valid Image";
+            }
+
+        }
+    }
+}
+
+@code{
+    private async Task Click_Speak()
+    {
+        await SynthesizeAudioAsync();
+    }
+    public async Task SynthesizeAudioAsync()
+    {
+        var config = SpeechConfig.FromSubscription("6e281c160f194de0b1d49fc564cb76be", "centralindia");
+
+        config.SpeechSynthesisLanguage = "en-IN";
+        config.SpeechSynthesisVoiceName = "en-IN-NeerjaNeural";
+
+        using var synthesizer = new SpeechSynthesizer(config);
+
+        await synthesizer.SpeakTextAsync(sug);
+
+    }
+}

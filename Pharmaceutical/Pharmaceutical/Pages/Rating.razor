@@ -1,0 +1,59 @@
+﻿
+@page "/rating"
+@using static Pharmaceutical.Rating_Analysis;
+
+<h1>Feed Back Form</h1>
+
+<hr />
+<div class="row">
+	<EditForm Model="@myform">
+		<div class="col-lg-12"> 
+			<div class="form-group">
+				<label>Please Enter your Feed Back on this Application</label> 
+				<input type="text" class="form-control" @bind-value="myform.InputText" />
+			</div>
+		</div>
+		<div class="col-10">
+			<div class="form-group">
+				 <button class="btn btn-primary btn-sm" @onclick="Check_Submit"> Submit</button>
+			</div>
+		</div>
+
+	</EditForm>
+</div>
+<h3>@Imgurl</h3>
+
+@code
+{
+	public string DisplayMsg;
+	public string Imgurl;
+	public MyModel myform = new MyModel();
+
+	public class MyModel
+	{
+		public string InputText { get; set; }
+	}
+
+	public void Check_Submit()
+	{
+
+		ModelInput sampleData = new ModelInput()
+			{
+				Col0 = myform.InputText
+			};
+		// Make a single prediction on the sample data and print results 
+		ModelOutput result = Predict(sampleData);
+		DisplayMsg = result.PredictedLabel;
+            
+		if (DisplayMsg.Trim() == "Positive")
+		{
+			Imgurl = "Thanks for your Response, Your feed back is highly Appreciable";
+		}
+		else if (DisplayMsg.Trim() == "Negative")
+		{
+			Imgurl = "Thanks for your response, We Wil do more";
+		}
+		else DisplayMsg = "thanks for your Response";
+
+	}
+}

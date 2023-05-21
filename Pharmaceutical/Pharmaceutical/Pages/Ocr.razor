@@ -1,0 +1,140 @@
+﻿@page "/ocr"
+@using Pharmaceutical.Data
+@using Pharmaceutical.Services
+@using System
+@using System.IO
+@using Microsoft.Azure.CognitiveServices.Vision.ComputerVision
+@using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models
+@using System.Threading.Tasks
+@using System.Threading
+@using System.Linq
+@using Microsoft.CognitiveServices.Speech;
+@using Microsoft.CognitiveServices.Speech.Audio;
+@using Microsoft.CognitiveServices.Speech.Translation;
+@inject IFileUpload fileUpload
+@inject IJSRuntime JS
+
+<h3> OCR </h3>
+
+<div class="row">
+    <div class="col-md-5">
+            <BlazorInputFile.InputFile OnChange="HandleFileSelected"></BlazorInputFile.InputFile>
+            <p></p>
+            <div id="Messagebox" class="col-8 alert-info"></div>
+            <p></p>
+            <div>
+            <img src="@imagename" style="width:300px; height:300px;" />
+            </div>  
+    </div>
+    &nbsp;
+    &nbsp;
+    <div class="col-md-5">
+        <div >
+            <h3> OUPUT RESULT</h3>
+        </div>
+        <hr />
+        <textarea disabled class="form-control" rows="15" cols="20">@extractedText</textarea>
+        <p></p>
+        <P></P>
+        <div class="row">
+            <div class="col-sm-6">
+                <button class="btn btn-primary btn-primary" @onclick="AnalyzeImage"> Extract </button>  &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-primary btn-sm" @onclick="Click_Speak"> Speak</button>
+            </div>
+        </div>
+    </div>   
+</div>
+
+@code {
+
+    public string extractedText = "";
+
+}
+
+
+@code {
+    public string localImageFile = "";
+    public string imagename = "";
+    IFileListEntry file;
+    public string ResultData { get; set; }
+
+  async Task HandleFileSelected(IFileListEntry[] files)
+    {
+
+        var file = files.FirstOrDefault();
+        if (file != null)
+        {
+            await fileUpload.UploadFile(file);
+            await JS.InvokeVoidAsync("ShowMessageFile", file.Name, file.Size, file.Type);
+            string FilePath = "C:/Users/Madhavi/source/repos/Pharmaceutical/Pharmaceutical/wwwroot/images/" + file.Name;
+            imagename = "images/" + file.Name;
+            localImageFile = FilePath;
+        }
+    }
+}
+
+
+@code {
+    private string key = "431166317dbb4f5bbc67159326d8130c";
+    private string endpoint = "https://blazorfile.cognitiveservices.azure.com/";
+
+   
+
+    private ComputerVisionClient Authenticate(string endpoint, string key)
+    {
+        ComputerVisionClient client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(key))
+            {
+                Endpoint = endpoint
+            };
+        return client;
+    }
+
+    private async Task ReadFileLocal(ComputerVisionClient client, string localFile)
+    {
+        var textHeaders = await client.ReadInStreamAsync(File.OpenRead(localFile));
+        string operationLocation = textHeaders.OperationLocation;
+        await Task.Delay(2000);
+
+        const int numberOfCharsInOperationId = 36;
+        string operationId = operationLocation.Substring(operationLocation.Length - numberOfCharsInOperationId);
+
+        ReadOperationResult results;
+
+        do
+        {
+            results = await client.GetReadResultAsync(Guid.Parse(operationId));
+        }
+        while (results.Status == OperationStatusCodes.Running || results.Status == OperationStatusCodes.NotStarted);
+
+        var textUrlFileResults = results.AnalyzeResult.ReadResults;
+        extractedText = string.Join("\n", textUrlFileResults.SelectMany(page => page.Lines.Select(line => line.Text)));
+    }
+
+    private async Task AnalyzeImage()
+    {
+        ComputerVisionClient client = Authenticate(endpoint, key);
+        await ReadFileLocal(client, localImageFile);
+    }
+}
+
+@code{
+        async Task Click_Speak()
+        {
+            await SynthesizeAudioAsync();
+        }
+        async Task SynthesizeAudioAsync()
+        {
+            var config = SpeechConfig.FromSubscription("6e281c160f194de0b1d49fc564cb76be", "centralindia");
+
+            config.SpeechSynthesisLanguage = "en-IN";
+            config.SpeechSynthesisVoiceName = "en-IN-NeerjaNeural";
+
+            using var synthesizer = new SpeechSynthesizer(config);
+
+            await synthesizer.SpeakTextAsync(extractedText);
+        }
+}
+
+
+
+
