@@ -1,0 +1,8 @@
+# Number of terms = 7
+0	Fever Medicine
+1	Cold Medicine
+2	Eye Drops
+3	Skin Medicine
+4	Iron Medicine
+5	Headache Medicine
+6	Ear Drops
